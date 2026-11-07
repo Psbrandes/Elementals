@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+display_name = "Fundeiro"
+behavior = 3
+max_hp = 20
+score = 200
+body_color = Color(0.79, 0.64, 0.15, 1)
+body_size = Vector2(18, 46)
+walk_speed = Vector2(60, 40)
+shot_damage = 6
+shot_speed = 150.0
+shot_interval = 120
+keep_distance = 130.0
+flee_distance = 56.0
+sprite_id = "samurai_archer"
+sprite_scale = 0.62
+shot_art = "res://assets/props/arrow.png"
+element = "Folha"
+weak_to = PackedStringArray("Fogo", "Vento")
+resists = PackedStringArray("Água", "Terra")

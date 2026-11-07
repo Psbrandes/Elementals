@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+display_name = "Piromante"
+behavior = 6
+max_hp = 24
+score = 250
+body_color = Color(0.9, 0.42, 0.15, 1)
+body_size = Vector2(18, 46)
+walk_speed = Vector2(50, 35)
+element = "Fogo"
+weak_to = PackedStringArray("Água")
+resists = PackedStringArray("Fogo")
+dodge_chance = 0.2
+drop = "orbe"
+drop_chance = 0.35
+sprite_id = "witch"
+sprite_scale = 0.62
+sprite_tint = Color(1, 0.62, 0.4, 1)
+attack_anim = "sp_atk"
+shot_interval = 150
+keep_distance = 110.0
+flee_distance = 60.0
+bomb_flight = 50
+bomb_damage = 12
+bomb_radius = 22.0

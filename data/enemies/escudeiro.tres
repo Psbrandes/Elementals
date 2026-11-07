@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+display_name = "Escudeiro"
+behavior = 5
+max_hp = 45
+score = 250
+body_color = Color(0.45, 0.62, 0.8, 1)
+body_size = Vector2(22, 50)
+walk_speed = Vector2(45, 30)
+element = "Gelo"
+weak_to = PackedStringArray("Metal", "Terra")
+resists = PackedStringArray("Água")
+drop = "maca"
+drop_chance = 0.25
+sprite_id = "samurai"
+sprite_scale = 0.7
+sprite_tint = Color(0.6, 0.8, 1, 1)
+attack_anim = "atk2"
+attack_damage = 7
+attack_reach = 26.0
+attack_startup = 16
+attack_active = 4
+attack_recovery = 24
+attack_cooldown_min = 60
+attack_cooldown_max = 110
+guard_hits = 3
+bash_damage = 8

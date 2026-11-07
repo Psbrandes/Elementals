@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+display_name = "Ferrugem"
+behavior = 4
+max_hp = 300
+score = 2000
+body_color = Color(0.63, 0.32, 0.18, 1)
+body_size = Vector2(32, 96)
+walk_speed = Vector2(40, 28)
+armor_hits = 2
+grabbable = false
+phase_two_color = Color(0.82, 0.41, 0.12, 1)
+sprite_id = "witch"
+sprite_scale = 1.1
+attack_anim = "atk1"
+element = "Terra"
+weak_to = PackedStringArray("Água", "Folha")
+resists = PackedStringArray("Terra")

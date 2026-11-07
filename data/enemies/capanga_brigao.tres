@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+display_name = "Capanga Brigão"
+max_hp = 36
+score = 120
+body_color = Color(0.62, 0.22, 0.27, 1)
+walk_speed = Vector2(62, 40)
+attack_damage = 7
+attack_reach = 24.0
+attack_startup = 11
+attack_active = 3
+attack_recovery = 20
+attack_cooldown_min = 35
+attack_cooldown_max = 75
+sprite_id = "samurai"
+sprite_scale = 0.68
+sprite_tint = Color(1, 0.45, 0.4, 1)
+attack_anim = "atk2"
+element = "Fogo"
+weak_to = PackedStringArray("Água")
+resists = PackedStringArray("Fogo")
+dodge_chance = 0.25
+combo_hits = 2
+drop = "moedas"
+drop_chance = 0.15

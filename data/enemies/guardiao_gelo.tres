@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+display_name = "Guardião de Gelo"
+behavior = 0
+max_hp = 110
+score = 500
+body_color = Color(0.5, 0.83, 1, 1)
+body_size = Vector2(28, 64)
+walk_speed = Vector2(38, 26)
+armor_hits = 2
+grabbable = false
+element = "Gelo"
+weak_to = PackedStringArray("Fogo", "Metal")
+resists = PackedStringArray("Água")
+drop = "frango"
+drop_chance = 0.5
+sprite_id = "frost_guardian"
+sprite_scale = 0.7
+attack_anim = "atk1"
+attack_damage = 14
+attack_reach = 34.0
+attack_startup = 20
+attack_active = 5
+attack_recovery = 28
+attack_cooldown_min = 70
+attack_cooldown_max = 120
+attack_knockdown = true

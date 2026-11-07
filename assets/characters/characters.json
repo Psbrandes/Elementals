@@ -1,0 +1,663 @@
+{
+ "crystal_mauler": {
+  "anchor": [
+   59,
+   92
+  ],
+  "anims": {
+   "air_atk": {
+    "frames": 8,
+    "hit": 3,
+    "reach": 41
+   },
+   "atk1": {
+    "frames": 7,
+    "hit": 3,
+    "reach": 40
+   },
+   "atk2": {
+    "frames": 7,
+    "hit": 5,
+    "reach": 36
+   },
+   "atk3": {
+    "frames": 17,
+    "hit": 13,
+    "reach": 138
+   },
+   "death": {
+    "frames": 15
+   },
+   "defend": {
+    "frames": 9
+   },
+   "idle": {
+    "frames": 8
+   },
+   "j_down": {
+    "frames": 3
+   },
+   "j_up": {
+    "frames": 3
+   },
+   "roll": {
+    "frames": 8
+   },
+   "run": {
+    "frames": 8
+   },
+   "sp_atk": {
+    "frames": 15,
+    "hit": 9,
+    "reach": 142
+   },
+   "take_hit": {
+    "frames": 6
+   }
+  },
+  "columns": 10,
+  "frame_size": [
+   201,
+   92
+  ],
+  "height": 39
+ },
+ "demon": {
+  "anchor": [
+   62,
+   73
+  ],
+  "anims": {
+   "atk1": {
+    "frames": 6,
+    "hit": 4,
+    "reach": 56
+   },
+   "death": {
+    "frames": 11
+   },
+   "idle": {
+    "frames": 8
+   },
+   "run": {
+    "frames": 10
+   },
+   "take_hit": {
+    "frames": 6
+   }
+  },
+  "columns": 16,
+  "frame_size": [
+   128,
+   73
+  ],
+  "height": 69
+ },
+ "fire_knight": {
+  "anchor": [
+   45,
+   105
+  ],
+  "anims": {
+   "air_atk": {
+    "frames": 8,
+    "hit": 6,
+    "reach": 117
+   },
+   "atk1": {
+    "frames": 11,
+    "hit": 4,
+    "reach": 84
+   },
+   "atk2": {
+    "frames": 19,
+    "hit": 14,
+    "reach": 89
+   },
+   "atk3": {
+    "frames": 28,
+    "hit": 24,
+    "reach": 120
+   },
+   "death": {
+    "frames": 13
+   },
+   "defend": {
+    "frames": 10
+   },
+   "idle": {
+    "frames": 8
+   },
+   "j_down": {
+    "frames": 3
+   },
+   "j_up": {
+    "frames": 3
+   },
+   "roll": {
+    "frames": 8
+   },
+   "run": {
+    "frames": 8
+   },
+   "sp_atk": {
+    "frames": 18,
+    "hit": 12,
+    "reach": 122
+   },
+   "take_hit": {
+    "frames": 6
+   }
+  },
+  "columns": 12,
+  "frame_size": [
+   167,
+   106
+  ],
+  "height": 44
+ },
+ "frost_guardian": {
+  "anchor": [
+   79,
+   93
+  ],
+  "anims": {
+   "atk1": {
+    "frames": 14,
+    "hit": 7,
+    "reach": 105
+   },
+   "death": {
+    "frames": 16
+   },
+   "idle": {
+    "frames": 6
+   },
+   "run": {
+    "frames": 10
+   },
+   "take_hit": {
+    "frames": 7
+   }
+  },
+  "columns": 11,
+  "frame_size": [
+   184,
+   96
+  ],
+  "height": 92
+ },
+ "ground_monk": {
+  "anchor": [
+   45,
+   57
+  ],
+  "anims": {
+   "air_atk": {
+    "frames": 7,
+    "hit": 5,
+    "reach": 44
+   },
+   "atk1": {
+    "frames": 6,
+    "hit": 4,
+    "reach": 41
+   },
+   "atk2": {
+    "frames": 12,
+    "hit": 10,
+    "reach": 47
+   },
+   "atk3": {
+    "frames": 23,
+    "hit": 17,
+    "reach": 94
+   },
+   "death": {
+    "frames": 18
+   },
+   "defend": {
+    "frames": 13
+   },
+   "idle": {
+    "frames": 6
+   },
+   "j_down": {
+    "frames": 3
+   },
+   "j_up": {
+    "frames": 3
+   },
+   "roll": {
+    "frames": 6
+   },
+   "run": {
+    "frames": 8
+   },
+   "sp_atk": {
+    "frames": 25,
+    "hit": 3,
+    "reach": 84
+   },
+   "take_hit": {
+    "frames": 6
+   }
+  },
+  "columns": 14,
+  "frame_size": [
+   139,
+   61
+  ],
+  "height": 35
+ },
+ "leaf_ranger": {
+  "anchor": [
+   47,
+   101
+  ],
+  "anims": {
+   "air_atk": {
+    "frames": 10,
+    "hit": 6,
+    "reach": 39
+   },
+   "atk1": {
+    "frames": 10,
+    "hit": 5,
+    "reach": 85
+   },
+   "atk2": {
+    "frames": 15,
+    "hit": 10,
+    "reach": 54
+   },
+   "atk3": {
+    "frames": 12,
+    "hit": 8,
+    "reach": 40
+   },
+   "death": {
+    "frames": 19
+   },
+   "defend": {
+    "frames": 19
+   },
+   "idle": {
+    "frames": 12
+   },
+   "j_down": {
+    "frames": 3
+   },
+   "j_up": {
+    "frames": 3
+   },
+   "roll": {
+    "frames": 8
+   },
+   "run": {
+    "frames": 10
+   },
+   "sp_atk": {
+    "frames": 17,
+    "hit": 9,
+    "reach": 148
+   },
+   "take_hit": {
+    "frames": 6
+   }
+  },
+  "columns": 10,
+  "frame_size": [
+   195,
+   101
+  ],
+  "height": 44
+ },
+ "metal_bladekeeper": {
+  "anchor": [
+   82,
+   60
+  ],
+  "anims": {
+   "air_atk": {
+    "frames": 8,
+    "hit": 3,
+    "reach": 66
+   },
+   "atk1": {
+    "frames": 6,
+    "hit": 1,
+    "reach": 48
+   },
+   "atk2": {
+    "frames": 8,
+    "hit": 4,
+    "reach": 50
+   },
+   "atk3": {
+    "frames": 18,
+    "hit": 16,
+    "reach": 57
+   },
+   "death": {
+    "frames": 12
+   },
+   "defend": {
+    "frames": 12
+   },
+   "idle": {
+    "frames": 8
+   },
+   "j_down": {
+    "frames": 3
+   },
+   "j_up": {
+    "frames": 3
+   },
+   "roll": {
+    "frames": 7
+   },
+   "run": {
+    "frames": 8
+   },
+   "sp_atk": {
+    "frames": 11,
+    "hit": 4,
+    "reach": 107
+   },
+   "take_hit": {
+    "frames": 6
+   }
+  },
+  "columns": 10,
+  "frame_size": [
+   189,
+   60
+  ],
+  "height": 42
+ },
+ "samurai": {
+  "anchor": [
+   36,
+   104
+  ],
+  "anims": {
+   "atk1": {
+    "frames": 4,
+    "hit": 2,
+    "reach": 82
+   },
+   "atk2": {
+    "frames": 5,
+    "hit": 4,
+    "reach": 87
+   },
+   "atk3": {
+    "frames": 4,
+    "hit": 2,
+    "reach": 78
+   },
+   "death": {
+    "frames": 6
+   },
+   "defend": {
+    "frames": 2
+   },
+   "idle": {
+    "frames": 6
+   },
+   "run": {
+    "frames": 9
+   },
+   "take_hit": {
+    "frames": 3
+   }
+  },
+  "columns": 16,
+  "frame_size": [
+   128,
+   104
+  ],
+  "height": 69
+ },
+ "samurai_archer": {
+  "anchor": [
+   56,
+   115
+  ],
+  "anims": {
+   "atk1": {
+    "frames": 5,
+    "hit": 3,
+    "reach": 64
+   },
+   "death": {
+    "frames": 5
+   },
+   "idle": {
+    "frames": 9
+   },
+   "run": {
+    "frames": 8
+   },
+   "shot": {
+    "frames": 14,
+    "hit": 7,
+    "reach": 64
+   },
+   "take_hit": {
+    "frames": 3
+   }
+  },
+  "columns": 17,
+  "frame_size": [
+   120,
+   115
+  ],
+  "height": 103
+ },
+ "samurai_commander": {
+  "anchor": [
+   56,
+   96
+  ],
+  "anims": {
+   "atk1": {
+    "frames": 4,
+    "hit": 2,
+    "reach": 54
+   },
+   "atk2": {
+    "frames": 4,
+    "hit": 2,
+    "reach": 50
+   },
+   "dash": {
+    "frames": 8
+   },
+   "death": {
+    "frames": 6
+   },
+   "defend": {
+    "frames": 2
+   },
+   "idle": {
+    "frames": 5
+   },
+   "run": {
+    "frames": 9
+   },
+   "take_hit": {
+    "frames": 2
+   }
+  },
+  "columns": 18,
+  "frame_size": [
+   110,
+   96
+  ],
+  "height": 93
+ },
+ "water_priestess": {
+  "anchor": [
+   30,
+   89
+  ],
+  "anims": {
+   "air_atk": {
+    "frames": 8,
+    "hit": 6,
+    "reach": 87
+   },
+   "atk1": {
+    "frames": 7,
+    "hit": 3,
+    "reach": 58
+   },
+   "atk2": {
+    "frames": 21,
+    "hit": 17,
+    "reach": 90
+   },
+   "atk3": {
+    "frames": 27,
+    "hit": 26,
+    "reach": 108
+   },
+   "death": {
+    "frames": 16
+   },
+   "defend": {
+    "frames": 12
+   },
+   "idle": {
+    "frames": 8
+   },
+   "j_down": {
+    "frames": 3
+   },
+   "j_up": {
+    "frames": 3
+   },
+   "roll": {
+    "frames": 6
+   },
+   "run": {
+    "frames": 10
+   },
+   "sp_atk": {
+    "frames": 32,
+    "hit": 30,
+    "reach": 106
+   },
+   "take_hit": {
+    "frames": 7
+   }
+  },
+  "columns": 14,
+  "frame_size": [
+   138,
+   89
+  ],
+  "height": 38
+ },
+ "wind_hashashin": {
+  "anchor": [
+   97,
+   111
+  ],
+  "anims": {
+   "air_atk": {
+    "frames": 7,
+    "hit": 6,
+    "reach": 62
+   },
+   "atk1": {
+    "frames": 8,
+    "hit": 0,
+    "reach": 40
+   },
+   "atk2": {
+    "frames": 18,
+    "hit": 8,
+    "reach": 60
+   },
+   "atk3": {
+    "frames": 26,
+    "hit": 21,
+    "reach": 110
+   },
+   "death": {
+    "frames": 19
+   },
+   "defend": {
+    "frames": 8
+   },
+   "idle": {
+    "frames": 8
+   },
+   "j_down": {
+    "frames": 3
+   },
+   "j_up": {
+    "frames": 3
+   },
+   "roll": {
+    "frames": 6
+   },
+   "run": {
+    "frames": 8
+   },
+   "sp_atk": {
+    "frames": 30,
+    "hit": 14,
+    "reach": 112
+   },
+   "take_hit": {
+    "frames": 6
+   }
+  },
+  "columns": 9,
+  "frame_size": [
+   209,
+   112
+  ],
+  "height": 37
+ },
+ "witch": {
+  "anchor": [
+   33,
+   91
+  ],
+  "anims": {
+   "atk1": {
+    "frames": 10,
+    "hit": 8,
+    "reach": 27
+   },
+   "death": {
+    "frames": 4
+   },
+   "idle": {
+    "frames": 6
+   },
+   "run": {
+    "frames": 10
+   },
+   "sp_atk": {
+    "frames": 8,
+    "hit": 6,
+    "reach": 39
+   },
+   "take_hit": {
+    "frames": 5
+   }
+  },
+  "columns": 28,
+  "frame_size": [
+   72,
+   91
+  ],
+  "height": 68
+ }
+}
