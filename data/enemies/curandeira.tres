@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/enemies/curandeira.gd" id="2_script"]
+
+[resource]
+script = ExtResource("1_data")
+display_name = "Curandeira"
+behavior = 6
+max_hp = 40
+score = 300
+body_color = Color(0.3, 0.6, 0.55, 1)
+walk_speed = Vector2(50, 34)
+element = "Água"
+weak_to = PackedStringArray("Folha", "Terra")
+resists = PackedStringArray("Água", "Fogo")
+custom_script = ExtResource("2_script")
+drop = "orbe"
+drop_chance = 0.3
+sprite_id = "water_priestess"
+sprite_scale = 1.2
+sprite_tint = Color(0.62, 0.8, 0.66, 1)
+attack_anim = "atk1"
+attack_damage = 5
+attack_reach = 34.0
+attack_startup = 14
+shot_interval = 90
+keep_distance = 120.0
+flee_distance = 56.0

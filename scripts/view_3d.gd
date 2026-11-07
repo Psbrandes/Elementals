@@ -24,6 +24,7 @@ const SHAKE_SCALE := 1.0
 
 const FLASH_MODULATE := Color(4.0, 4.0, 4.0)
 const SHADOW_COLOR := Color(0, 0, 0, 0.35)
+const LAMINA_ART := "res://assets/props/lamina.png"
 const TELEGRAPH_COLOR := Color("ffcc33")
 const VFX_DIR := "res://assets/vfx/"
 ## Escala de cada efeito (pixel_size); o especial é ajustado pela largura.
@@ -239,18 +240,17 @@ func _build_camera() -> void:
 func _build_lights() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_COLOR
-	var biome := StageScenery.data()
-	env.background_color = biome["sky"]
+	env.background_color = StageScenery.setting("sky")
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = biome["ambient"]
-	env.ambient_light_energy = 0.8
+	env.ambient_light_color = StageScenery.setting("ambient")
+	env.ambient_light_energy = StageScenery.setting("ambient_energy")
 	var world_env := WorldEnvironment.new()
 	world_env.environment = env
 	add_child(world_env)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-55.0, -25.0, 0.0)
-	sun.light_color = biome["sun"]
-	sun.light_energy = 0.9
+	sun.light_color = StageScenery.setting("sun")
+	sun.light_energy = StageScenery.setting("sun_energy")
 	add_child(sun)
 
 
@@ -299,6 +299,11 @@ func _make_proxy(node: Node) -> Dictionary:
 			arrow.position.y = Projectile.STONE_HEIGHT
 			arrow.flip_h = node.direction < 0
 			root.add_child(arrow)
+			if node.art == LAMINA_ART:
+				# Lâmina giratória do Corrosão (fase 2): gira de frente para a câmera.
+				arrow.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				arrow.pixel_size = 1.0
+				proxy["spin"] = arrow
 			return proxy
 		var mesh := MeshInstance3D.new()
 		if node.ground:
@@ -318,6 +323,15 @@ func _make_proxy(node: Node) -> Dictionary:
 		proxy["mesh"] = mesh
 	elif node is Lob:
 		proxy["kind"] = "lob"
+		if node.look == "lamina":
+			var blade := _billboard(load(LAMINA_ART), 1.0)
+			blade.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			root.add_child(blade)
+			proxy["mesh"] = blade
+			proxy["spin"] = blade
+			proxy["marker"] = _make_marker()
+			root.tree_exiting.connect(proxy["marker"].queue_free)
+			return proxy
 		var ball := MeshInstance3D.new()
 		var sphere := SphereMesh.new()
 		var bomb: bool = node.look == "bomba"
@@ -470,8 +484,15 @@ func _update_proxy(node: Node2D, proxy: Dictionary) -> void:
 			if node.ground:
 				var mesh: MeshInstance3D = proxy["mesh"]
 				mesh.scale.y = 0.7 + 0.3 * float((_frame / 4) % 3)
+			if proxy.has("spin"):
+				var spin: Sprite3D = proxy["spin"]
+				spin.flip_h = (_frame / 3) % 2 == 0
+				spin.flip_v = (_frame / 6) % 2 == 0
 		"lob":
-			var ball: MeshInstance3D = proxy["mesh"]
+			var ball: Node3D = proxy["mesh"]
+			if proxy.has("spin"):
+				(ball as Sprite3D).flip_h = (_frame / 3) % 2 == 0
+				(ball as Sprite3D).flip_v = (_frame / 6) % 2 == 0
 			ball.position.y = node.height
 			ball.rotation.z += 0.2
 			shadow.scale = Vector3(8.0, 1.0, 6.0)

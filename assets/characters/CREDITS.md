@@ -15,6 +15,10 @@ Licença: Creative Commons Attribution 4.0 (CC-BY 4.0). Pode usar e editar, incl
 comercialmente, desde que "chierit" apareça nos créditos do jogo. O autor pede para
 não revender os pacotes.
 
+Os inimigos da fase 2 reaproveitam essa arte com outra paleta (só tingidos no jogo, os
+arquivos não mudam): Sombra (Wind Hashashin), Curandeira (Water Priestess) e o chefe
+Corrosão (Metal Bladekeeper).
+
 As tiras desta pasta foram geradas a partir dos PNGs originais por
 `tools/pack_sprites.py` (só recorte e junção dos quadros, sem mudar a arte).
 
@@ -42,6 +46,11 @@ jogo deve ficar privado.
   `dodge`, `land`, `grab`, `throw`, `alert`, `block`, `counter`, `charge_ready`, `rank_up`, `go`,
   `boss_intro`, `extra_life`, `tally`, `tally_end`, `stamp`, `menu_open` e `menu_close`. Compostos e
   sintetizados do zero por `tools/gerar_audio.py`, sem amostras de terceiros.
+
+## Arte original do projeto
+
+- `assets/props/lamina.png` (lâmina giratória do Corrosão): CC0, desenhada pixel a pixel por
+  `tools/gerar_lamina.py`.
 
 ## Efeitos visuais
 

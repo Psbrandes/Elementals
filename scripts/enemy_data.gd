@@ -28,6 +28,10 @@ enum Behavior { BRAWLER, RUNNER, TANK, SHOOTER, BOSS, GUARD, BOMBER }
 @export var resists: PackedStringArray = []
 ## Chance (0 a 1) de sair da faixa quando o jogador começa um golpe na direção dele.
 @export var dodge_chance := 0.0
+## Script próprio do inimigo (estende Enemy ou Boss), para quem tem golpes que os
+## arquétipos não cobrem: Sombra, Curandeira e Corrosão, da fase 2. Vazio = enemy.gd
+## (ou boss.gd, com behavior BOSS).
+@export var custom_script: Script
 ## Golpes seguidos do soco: depois de acertar, emenda mais (Brigão = 2).
 @export var combo_hits := 1
 ## Item que pode cair quando morre ("" = nada) e a chance.
@@ -86,3 +90,5 @@ enum Behavior { BRAWLER, RUNNER, TANK, SHOOTER, BOSS, GUARD, BOMBER }
 
 @export_group("Chefe (BOSS)")
 @export var phase_two_color := Color("d2691e")
+## Faixa que aparece quando o chefe chega (vazio = nome do Ferrugem, da fase 1).
+@export var boss_title := ""

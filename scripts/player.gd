@@ -119,13 +119,22 @@ const ATTACK_ANIMS := {"jab": "atk1", "direto": "atk2", "gancho": "atk3", "lanca
 ## alcance cresce até onde a arte chega, com este teto (efeitos como explosões e
 ## flechas passam de 100 px e não contam inteiros).
 const REACH_CAP := 48.0
-## O especial segue a arte inteira (preparo, golpe e fim), a 2 ticks por quadro,
-## dentro destes limites para não ficar lento demais.
-const SPECIAL_ART_TICKS := 2
-const SPECIAL_MAX_STARTUP := 28
-const SPECIAL_MAX_RECOVERY := 30
-## O efeito do especial sai um pouco à frente do herói, para o lado do golpe.
-const SPECIAL_FX_AHEAD := 16.0
+## Especial (L) de cada herói, quadro a quadro da arte sp_atk (ver
+## CharacterSprite.art_timing): tpf = ticks por quadro (60 ticks = 1 s), windup =
+## ticks por quadro no preparo, impact = 1º quadro que dá dano (o efeito chega no
+## inimigo), end = último quadro com dano (o efeito ainda na tela). A arte toca
+## inteira, do 1º ao último quadro, sem pular nenhum.
+const SPECIAL_ART := {
+	"fire_knight": {"tpf": 3, "impact": 12, "end": 14},
+	"wind_hashashin": {"tpf": 3, "impact": 8, "end": 27},
+	"leaf_ranger": {"tpf": 3, "impact": 9, "end": 12},
+	"ground_monk": {"tpf": 3, "impact": 4, "end": 20},
+	"metal_bladekeeper": {"tpf": 4, "impact": 3, "end": 8, "near": -48.0},
+	"crystal_mauler": {"tpf": 4, "impact": 8, "end": 12},
+	"water_priestess": {"tpf": 3, "impact": 12, "end": 22},
+}
+## O alcance do especial acompanha até onde o efeito desenhado chega (com teto).
+const SPECIAL_MAX_REACH := 96.0
 ## A queda mostra a morte até o quadro "caído" do herói; levantar é o inverso.
 const FALL_FRAMES := 14
 const IDLE_TICKS := 7
@@ -555,10 +564,6 @@ func _end_combo(dropped: bool) -> void:
 
 ## Golpe que acertou pode ser cancelado no especial (o combo continua).
 func _update_attack() -> void:
-	if current_attack.get("special", false) and state_frame == int(current_attack["startup"]) + 1 and stage:
-		# O efeito do elemento explode junto com o quadro de impacto da arte.
-		stage.fx(special_effect(character.get("element", "Fogo")), position + Vector2(facing * SPECIAL_FX_AHEAD, 0.0),
-			0.0, facing < 0)
 	HeroMoves.on_attack_frame(self)
 	if _combo_connected and not current_attack.get("special", false) and _buffer[&"special"] > 0:
 		if _start_any_special():
@@ -1003,23 +1008,36 @@ func _show_attack() -> void:
 	var anim := _anim_of(current_attack)
 	if anim == "":
 		anim = "atk1"
+	if current_attack.has("art_tpf"):
+		sprite.show_frame(anim, CharacterSprite.art_frame_at(current_attack, state_frame))
+		return
 	sprite.show_frame(anim, sprite.attack_frame(anim, state_frame, int(current_attack.get("startup", 0)),
 		int(current_attack.get("active", 0)), int(current_attack.get("recovery", 0)),
 		current_attack.get("special", false) or current_attack.get("full_art", false)))
 
 
-## O especial com o tempo ajustado à arte do herói: o dano sai no quadro de
-## impacto do desenho, e a animação toca do começo ao fim.
+## O especial com o tempo da arte do herói (SPECIAL_ART): o dano sai quando o
+## efeito desenhado chega, dura enquanto ele está na tela, e a animação toca do
+## primeiro ao último quadro.
 func special_attack() -> Dictionary:
 	var attack := SPECIAL.duplicate()
 	if sprite == null:
 		return attack
+	var id: String = character.get("id", Characters.DEFAULT_ID)
+	var art: Dictionary = SPECIAL_ART.get(id, {})
 	var count := sprite.frames_of("sp_atk")
-	var hit := mini(sprite.hit_frame_of("sp_atk"), count - 1)
-	attack["startup"] = clampi(hit * SPECIAL_ART_TICKS, SPECIAL["startup"], SPECIAL_MAX_STARTUP)
-	attack["recovery"] = clampi((count - hit) * SPECIAL_ART_TICKS - int(attack["active"]), SPECIAL["recovery"],
-		SPECIAL_MAX_RECOVERY)
-	return attack
+	if art.is_empty() or count < 2:
+		return attack
+	attack["anim"] = "sp_atk"
+	attack["art_from"] = 0
+	attack["art_to"] = count - 1
+	attack["art_impact"] = clampi(int(art["impact"]), 1, count - 1)
+	attack["art_end"] = clampi(int(art["end"]), int(attack["art_impact"]), count - 1)
+	attack["art_tpf"] = int(art["tpf"])
+	attack["art_windup_tpf"] = int(art.get("windup", art["tpf"]))
+	attack["far"] = clampf(sprite.reach_of("sp_atk") - 8.0, float(SPECIAL["far"]), SPECIAL_MAX_REACH)
+	attack["near"] = float(art.get("near", SPECIAL["near"]))
+	return CharacterSprite.art_timing(attack)
 
 
 ## Efeito visual do especial (assets/vfx) para o elemento do herói.

@@ -4,6 +4,8 @@ extends Node2D
 ## de câmera. Cada trava solta suas ondas, uma depois da outra; quando a última
 ## cai, aparece o "GO" e a câmera volta a seguir o jogador. O chefe Ferrugem
 ## fecha a terceira seção.
+## A fase em jogo vem de Fases (scripts/fases.gd): a fase 2 usa as mesmas regras
+## com outras seções, ondas e chefe.
 ##
 ## Também organiza o cerco: no máximo 2 inimigos atacam ao mesmo tempo (mais um
 ## por jogador extra no co-op).
@@ -37,6 +39,10 @@ const ENEMIES := {
 	"escudeiro": preload("res://data/enemies/escudeiro.tres"),
 	"guardiao_gelo": preload("res://data/enemies/guardiao_gelo.tres"),
 	"ferrugem": preload("res://data/enemies/ferrugem.tres"),
+	# Fase 2 (scripts/fases.gd).
+	"sombra": preload("res://data/enemies/sombra.tres"),
+	"curandeira": preload("res://data/enemies/curandeira.tres"),
+	"corrosao": preload("res://data/enemies/corrosao.tres"),
 }
 
 ## Largura de referência: travas, scroll e câmera são pensados nela. Telas mais
@@ -125,6 +131,9 @@ const SECTIONS := [
 	},
 ]
 
+## Seções da fase que está sendo jogada (Fases.sections(): a fase 1 é SECTIONS).
+var sections: Array = SECTIONS
+
 ## Seção onde a fase recomeça depois de um fim de jogo (continue).
 static var continue_section := 0
 
@@ -171,10 +180,13 @@ var _frames := 0
 
 
 func _ready() -> void:
-	Sound.music("fase")
-	section = clampi(continue_section, 0, SECTIONS.size() - 1)
-	cam_left = SECTIONS[section]["start"]
+	Fases.read_args()
+	sections = Fases.sections()
+	Sound.music(Fases.info()["music"])
+	section = clampi(continue_section, 0, sections.size() - 1)
+	cam_left = sections[section]["start"]
 	_register_player(player)
+	_apply_carry()
 	var net := get_node_or_null(^"/root/Net")
 	if net and net.active:
 		# Partida online: a sessão de rede cria os outros heróis e, no cliente,
@@ -183,16 +195,16 @@ func _ready() -> void:
 	if section > 0:
 		for i in players.size():
 			players[i].position = Vector2(cam_left + 60.0, 168.0 - i * 16.0)
-	for i in SECTIONS.size():
-		for lock: Dictionary in SECTIONS[i]["locks"]:
+	for i in sections.size():
+		for lock: Dictionary in sections[i]["locks"]:
 			if lock["x"] >= cam_left:
 				_locks.append(lock)
-		for ambush: Dictionary in SECTIONS[i].get("ambushes", []):
+		for ambush: Dictionary in sections[i].get("ambushes", []):
 			if ambush["x"] >= cam_left:
 				_ambushes.append(ambush)
 	if auto_spawn:
-		for i in range(section, SECTIONS.size()):
-			for prop: Dictionary in SECTIONS[i]["props"]:
+		for i in range(section, sections.size()):
+			for prop: Dictionary in sections[i]["props"]:
 				_spawn_breakable(prop)
 	_update_floor()
 	_update_camera_node()
@@ -246,12 +258,37 @@ func continue_here() -> void:
 ## Joga a fase de novo desde o começo, com o mesmo herói.
 func restart_stage() -> void:
 	continue_section = 0
+	Fases.reset_carry()
 	get_tree().paused = false
 	get_tree().reload_current_scene()
 
 
+## Fase concluída: abre a próxima com os pontos e as vidas de agora.
+func next_stage() -> void:
+	var lives := 0
+	for p: Player in players:
+		if is_instance_valid(p):
+			lives = maxi(lives, p.lives)
+	Fases.advance(score, lives)
+	continue_section = 0
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+
+## Pontos e vidas trazidos da fase anterior (só na primeira vez que a fase abre).
+func _apply_carry() -> void:
+	if Fases.carry.is_empty():
+		return
+	score = int(Fases.carry.get("score", 0))
+	_next_life_at = (score / EXTRA_LIFE_SCORE + 1) * EXTRA_LIFE_SCORE
+	player.lives = maxi(int(Fases.carry.get("lives", player.lives)), 1)
+	Fases.reset_carry()
+	score_changed.emit.call_deferred(score)
+
+
 func go_to_scene(path: String) -> void:
 	continue_section = 0
+	Fases.reset_carry()
 	get_tree().paused = false
 	get_tree().change_scene_to_file(path)
 
@@ -347,8 +384,8 @@ func _update_camera() -> void:
 			cam_left = _locks[_lock_index]["x"]
 			_start_lock(_locks[_lock_index])
 	var current := 0
-	for i in SECTIONS.size():
-		if cam_left + VIEW_WIDTH / 2.0 >= SECTIONS[i]["start"]:
+	for i in sections.size():
+		if cam_left + VIEW_WIDTH / 2.0 >= sections[i]["start"]:
 			current = i
 	if current != section:
 		section = current
@@ -454,9 +491,16 @@ func breakables() -> Array:
 	return list
 
 
-func spawn_enemy(data: EnemyData, at: Vector2) -> Enemy:
+## Inimigo com comportamento próprio (EnemyData.custom_script) ou da cena padrão.
+static func make_enemy(data: EnemyData) -> Enemy:
+	if data.custom_script:
+		return data.custom_script.new()
 	var scene := BOSS_SCENE if data.behavior == EnemyData.Behavior.BOSS else ENEMY_SCENE
-	var enemy: Enemy = scene.instantiate()
+	return scene.instantiate()
+
+
+func spawn_enemy(data: EnemyData, at: Vector2) -> Enemy:
+	var enemy: Enemy = make_enemy(data)
 	enemy.data = data
 	enemy.position = at
 	enemy.stage = self
@@ -595,7 +639,7 @@ func _spawn_one(name: String, i: int, only_right := false) -> Enemy:
 	if data.behavior == EnemyData.Behavior.BOSS:
 		y = (FLOOR_TOP + FLOOR_BOTTOM) / 2.0
 		x = view_right() + offscreen_margin(y, 40.0)
-		Sound.music("chefe")
+		Sound.music(Fases.info()["boss_music"])
 	return spawn_enemy(data, Vector2(x, y))
 
 
@@ -657,8 +701,8 @@ func explode(at: Vector2, radius: float, damage: int, source: Node2D, hurts_enem
 		if d.x <= radius + target.body_size.x / 2.0 and d.y <= radius * 0.5:
 			target.take_hit(damage, true, source)
 	shake(4.0)
-	Sound.play("stomp" if look == "pedra" else "hit_heavy", -2.0)
-	fx("stomp" if look == "pedra" else "special_fogo", at, 0.0)
+	Sound.play("stomp" if look == "pedra" else "slash" if look == "lamina" else "hit_heavy", -2.0)
+	fx({"pedra": "stomp", "lamina": "special_metal"}.get(look, "special_fogo"), at, 0.0)
 
 
 func spawn_lob(source: Node2D, from: Vector2, to: Vector2, damage: int, radius: float, flight: int, look := "bomba") -> Lob:

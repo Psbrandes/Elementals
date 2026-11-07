@@ -1,9 +1,12 @@
 class_name StageScenery
-## Cenário 3D da fase, montado em código a partir de Stage.SECTIONS. A fase pode
+## Cenário 3D da fase, montado em código a partir das seções da fase. A fase pode
 ## ser jogada no ferro-velho original (pacote "Dump Vector Tileset" da CraftPix, o padrão)
 ## ou em 4 cenários elementais (Terra, Deserto, Natureza e Vulcão) com arte gerada por
 ## tools/gerar_cenarios.py. Cada um fica em assets/scenery/biomas/<id>/.
 ## Para trocar a arte de um cenário: bg_1..4.png, chao.png, barril.png, caixa.png e props/.
+## No ferro-velho (padrão), cada fase ainda pode trocar a arte, o céu e as luzes pela chave
+## "scenery" de scripts/fases.gd (a fase 2 usa o ferro-velho à noite). Nos biomas elementais
+## vale o bioma escolhido em todas as fases.
 ##
 ## - Fundo: 4 camadas (céu + 3) em painéis cada vez mais longe da câmera, então
 ##   a perspectiva já dá o parallax (o céu quase parado, as silhuetas perto andando).
@@ -109,10 +112,39 @@ static func data(id := "") -> Dictionary:
 	return BIOMES.get(id if id != "" else biome, BIOMES[ORDER[0]])
 
 
-## Nome da seção da fase no cenário atual (o HUD mostra ao entrar nela).
+## Nome da seção da fase no cenário atual (o HUD mostra ao entrar nela). No ferro-velho
+## vale o nome que a fase dá à seção; nos biomas, o nome do bioma.
 static func section_title(index: int) -> String:
+	if _phase_art():
+		var sections: Array = Fases.sections()
+		return sections[clampi(index, 0, sections.size() - 1)]["title"]
 	var titles: Array = data()["sections"]
 	return titles[clampi(index, 0, titles.size() - 1)]
+
+
+## A fase manda na arte só no cenário padrão (ferro-velho).
+static func _phase_art() -> bool:
+	return biome == ORDER[0]
+
+
+## Todos os valores do cenário da fase em jogo: os do bioma e, no ferro-velho, o que a
+## fase trocou ("scenery" em scripts/fases.gd).
+static func config() -> Dictionary:
+	var b := data()
+	var cfg := {
+		"dir": DIR + biome + "/", "bg": "bg_%d.png", "floor": "chao.png", "floor_tint": b["floor"],
+		"floor_shaded": b.get("floor_shaded", false), "sky": b["sky"], "ambient": b["ambient"],
+		"ambient_energy": 0.8, "sun": b["sun"], "sun_energy": 0.9, "seed": 2026,
+		"back_row": b["back"], "deep_row": b["deep"], "front_row": b["front"], "deep_gap": b.get("deep_gap", [70.0, 140.0]),
+	}
+	if _phase_art():
+		cfg.merge(Fases.scenery(), true)
+	return cfg
+
+
+## Um valor do cenário da fase atual.
+static func setting(key: String) -> Variant:
+	return config()[key]
 
 
 ## Arte do barril e da caixa quebráveis com a cara do cenário.
@@ -121,10 +153,13 @@ static func breakable_art(kind: String) -> Texture2D:
 
 
 static var _textures := {}
+## Cenário da fase em jogo (calculado no build).
+static var _cfg := {}
 
 
 static func build(view: Node3D) -> void:
 	_textures.clear()
+	_cfg = config()
 	var root := Node3D.new()
 	root.name = "Scenery"
 	view.add_child(root)
@@ -133,11 +168,10 @@ static func build(view: Node3D) -> void:
 	_floor(root, left, right)
 	_background(root, left, right)
 	var rng := RandomNumberGenerator.new()
-	rng.seed = 2026
-	var info := data()
-	_row(root, rng, info["back"], left, right, 34.0, 70.0, FLOOR_BACK - 26.0, FLOOR_BACK - 70.0)
-	var deep_gap: Array = info.get("deep_gap", [70.0, 140.0])
-	_row(root, rng, info["deep"], left, right, deep_gap[0], deep_gap[1], FLOOR_BACK - 120.0, FLOOR_BACK - 210.0)
+	rng.seed = _cfg["seed"]
+	_row(root, rng, _cfg["back_row"], left, right, 34.0, 70.0, FLOOR_BACK - 26.0, FLOOR_BACK - 70.0)
+	var deep_gap: Array = _cfg["deep_gap"]
+	_row(root, rng, _cfg["deep_row"], left, right, deep_gap[0], deep_gap[1], FLOOR_BACK - 120.0, FLOOR_BACK - 210.0)
 	_front(root, rng, left, right)
 
 
@@ -154,10 +188,10 @@ static func _floor(root: Node3D, left: float, right: float) -> void:
 	mesh.mesh = plane
 	mesh.position = Vector3(left + width / 2.0, 0.0, FLOOR_DEEP + depth / 2.0)
 	var material := StandardMaterial3D.new()
-	material.albedo_texture = _texture("chao.png")
+	material.albedo_texture = _texture(_cfg["floor"])
 	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	material.albedo_color = data()["floor"]
-	if not data().get("floor_shaded", false):
+	material.albedo_color = _cfg["floor_tint"]
+	if not _cfg["floor_shaded"]:
 		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.uv1_scale = Vector3(width / (FLOOR_TILE * 4.0), depth / (FLOOR_TILE * 4.0), 1.0)
 	mesh.material_override = material
@@ -168,7 +202,7 @@ static func _floor(root: Node3D, left: float, right: float) -> void:
 static func _background(root: Node3D, left: float, right: float) -> void:
 	for i in BACKGROUND.size():
 		var layer: Dictionary = BACKGROUND[i]
-		var texture := _texture("bg_%d.png" % (i + 1))
+		var texture := _texture(_cfg["bg"] % (i + 1))
 		var height: float = layer["height"]
 		var tile_width := height * texture.get_width() / texture.get_height()
 		# Painel mais longe aparece mais largo na tela: sobra dos dois lados.
@@ -203,7 +237,7 @@ static func _row(root: Node3D, rng: RandomNumberGenerator, pieces: Array, left: 
 
 ## Detalhes pequenos perto da câmera, espaçados para não esconder a luta.
 static func _front(root: Node3D, rng: RandomNumberGenerator, left: float, right: float) -> void:
-	var front: Array = data()["front"]
+	var front: Array = _cfg["front_row"]
 	var x := left + 90.0
 	while x < right:
 		_prop(root, front[rng.randi() % front.size()], Vector3(x, 0.0, FLOOR_FRONT + rng.randf_range(30.0, 60.0)),
@@ -224,7 +258,7 @@ static func _prop(root: Node3D, name: String, feet: Vector3, scale: float, flip:
 
 
 static func _texture(file: String) -> Texture2D:
-	var path := DIR + biome + "/" + file
+	var path: String = (_cfg["dir"] if not _cfg.is_empty() else DIR + biome + "/") + file
 	if not _textures.has(path):
 		_textures[path] = load(path)
 	return _textures[path]

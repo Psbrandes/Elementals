@@ -67,6 +67,7 @@ func _run() -> void:
 		test_sprite_follows_state,
 		test_reach_follows_art,
 		test_long_attack_art_plays_in_poses,
+		test_special_art_plays_every_frame,
 		test_view_3d_mirrors_actors,
 		test_spawn_margin_grows_with_depth,
 		test_enemies_have_art,
@@ -773,6 +774,47 @@ func test_long_attack_art_plays_in_poses() -> void:
 		await _frames(30)
 
 
+## O especial de cada herói toca a arte sp_atk inteira: todos os quadros, na ordem,
+## cada um pelo tempo da tabela, o dano no quadro de impacto e até o último quadro.
+func test_special_art_plays_every_frame() -> void:
+	for c: Dictionary in Characters.LIST:
+		var id: String = c["id"]
+		await _teardown()
+		await _setup()
+		await _hero(id)
+		var enemy := _tough(Vector2(40, 0))
+		var hp_before := enemy.hp
+		var art: Dictionary = Player.SPECIAL_ART[id]
+		var count := player.sprite.frames_of("sp_atk")
+		player.add_meter(Player.METER_MAX)
+		player.input.press(&"special")
+		await _until(func() -> bool: return player.current_attack.get("special", false), 6)
+		var attack := player.current_attack
+		var frames := []
+		var hit_on_impact := false
+		while player.state == Fighter.State.ATTACK and frames.size() < 400:
+			if player.hitstop == 0:
+				if player.state_frame == int(attack["startup"]) + 1:
+					hit_on_impact = player.sprite.frame == int(art["impact"])
+				frames.append(player.sprite.frame)
+			await physics_frame
+		var runs := {}
+		for f: int in frames:
+			runs[f] = int(runs.get(f, 0)) + 1
+		var missing := []
+		var short := []
+		for f in count:
+			if not runs.has(f):
+				missing.append(f)
+			elif f < count - 1 and runs[f] < int(art.get("windup", art["tpf"])):
+				short.append(f)
+		_check(missing.is_empty(), "%s: especial mostra todos os %d quadros (faltam %s)" % [c["name"], count, missing])
+		_check(short.is_empty(), "%s: nenhum quadro do especial passa rápido demais (%s)" % [c["name"], short])
+		_check(_is_sorted(frames), "%s: a arte do especial nunca volta para trás" % c["name"])
+		_check(hit_on_impact, "%s: dano sai no quadro de impacto da arte" % c["name"])
+		_check(enemy.hp < hp_before, "%s: especial acerta o inimigo a 40 px" % c["name"])
+
+
 func _is_sorted(values: Array) -> bool:
 	for i in range(1, values.size()):
 		if values[i] < values[i - 1]:
@@ -841,7 +883,7 @@ func test_vfx() -> void:
 	for name in ["hit", "hit_heavy", "dust", "stomp", "break", "coin", "heal"]:
 		_check(view._vfx_meta.has(name), "efeito %s no vfx.json" % name)
 	var special := player.special_attack()
-	_check(special["startup"] == 24,
+	_check(special["startup"] == 36,
 		"especial do Brasa sai no quadro de impacto da arte (preparo %d)" % special["startup"])
 	var before := view.active_effects()
 	var enemy := _spawn(Vector2(30, 0))

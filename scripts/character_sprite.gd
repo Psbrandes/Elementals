@@ -116,6 +116,41 @@ func attack_frame(anim_name: String, t: int, startup: int, active: int, recovery
 	return hit + (step + 1) * tail / steps
 
 
+# --- Especiais: a arte inteira, quadro a quadro --------------------------------------
+## Os especiais são a vitrine da arte (o efeito do elemento está desenhado no próprio
+## herói), então não pulam quadros: cada quadro de art_from até art_to aparece, na
+## ordem, art_windup_tpf ticks no preparo e art_tpf ticks dali em diante. O último
+## quadro fica ART_SETTLE_TICKS a mais na tela (o golpe "assenta" antes do parado).
+const ART_SETTLE_TICKS := 4
+
+
+## Preenche startup/active/recovery de um golpe com "art_tpf" a partir da arte:
+## o dano começa em art_impact e vale até art_end (o efeito na tela).
+static func art_timing(attack: Dictionary) -> Dictionary:
+	var a := attack.duplicate()
+	var from := int(a.get("art_from", 0))
+	var impact := int(a["art_impact"])
+	var end := int(a["art_end"])
+	var to := int(a["art_to"])
+	var tpf := int(a["art_tpf"])
+	var windup := int(a.get("art_windup_tpf", tpf))
+	a["startup"] = maxi((impact - from) * windup, 1)
+	a["active"] = (end - impact + 1) * tpf
+	a["recovery"] = (to - end) * tpf + ART_SETTLE_TICKS
+	return a
+
+
+## Quadro da arte no tick t (1 = primeiro tick) de um golpe com art_timing.
+static func art_frame_at(attack: Dictionary, t: int) -> int:
+	var from := int(attack.get("art_from", 0))
+	var impact := int(attack["art_impact"])
+	var startup := int(attack["startup"])
+	if t <= startup:
+		return mini(from + (t - 1) / int(attack.get("art_windup_tpf", attack["art_tpf"])), impact - 1) \
+			if impact > from else from
+	return mini(impact + (t - startup - 1) / int(attack["art_tpf"]), int(attack["art_to"]))
+
+
 ## Em qual de `poses` poses está o tick `elapsed` de `total`. Com ease_in a 1ª
 ## pose ganha as sobras (antecipação); sem, a última ganha (assentamento).
 static func _pose_at(elapsed: int, total: int, poses: int, ease_in: bool) -> int:

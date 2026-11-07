@@ -155,6 +155,17 @@ e "Windows" (um `.exe` só, com co-op online). Veja `COMO-PUBLICAR-NO-ITCH.md`.
 - Três vidas, vida extra a cada 20.000 pontos.
 - Telas mais largas que 16:9 (celular 20:9) mostram mais cenário dos dois lados, e a arena e os pontos de spawn acompanham a largura visível. No celular e na web a escala é fracionária (sem barras pretas); no PC continua inteira. O jogo pausa sozinho quando a janela perde o foco ou o app vai para o fundo.
 
+**Fase 2: Cemitério de Ferro** (`scripts/fases.gd`)
+- Escolha no título (linha **Fase**, setas para os lados) ou no fim da fase 1 com **Próxima fase** (os pontos e as vidas passam junto). Online, por enquanto, só a fase 1.
+- Três seções (Portão do ferro-velho, Pilhas de sucata, Prensa enferrujada), 13 ondas em 6 travas e 2 emboscadas. A Sombra aparece sozinha na primeira trava e a Curandeira atrás de um Brutamontes.
+- **Sombra** (34, Sombra; fraca contra Fogo e Cristal): luta como o Faca e tem o Passo Sombrio: some piscando (dá para acertar e cancelar), fica invisível e intocável, e reaparece nas costas do herói com um corte de "!" de 16 quadros.
+- **Curandeira** (40, Água; fraca contra Folha e Terra): fica longe e reza brilhando em verde ("CURA..."); no fim, quem está ferido perto dela recupera 20 de vida. Um golpe na reza cancela a cura. Não cura chefe. Encurralada, dá um jato d'água que empurra.
+- **Chefe Corrosão, a Lâmina Enferrujada** (340, Metal; fraca contra Fogo e Terra), três fases:
+  - Fase 1 (armadura): corte duplo (o 2º derruba), lâmina giratória que vai e volta na faixa dela (mude de faixa ou pule) e guarda: segura golpes de frente que não derrubam e revida no 2º bloqueio. Quebra a guarda: golpe que derruba, pelas costas, pulando ou com a fraqueza.
+  - Fase 2 (50%): sem armadura e mais rápida; investida cortante que mira a faixa do herói e marca no chão onde vai parar.
+  - Fase 3 (25%, "FÚRIA!"): chama duas Sombras, ganha a chuva de lâminas (três lâminas em arco, no herói e dos lados) e o corte duplo emenda nela.
+- **Cenário provisório:** o ferro-velho à noite. Para trocar pela arte nova, veja o comentário no topo de `scripts/fases.gd` (pasta, camadas, chão, objetos, céu e luzes ficam na chave `scenery` da fase).
+
 ## Sensação do combate e combos (versão 2)
 
 - **Hit stop pelo peso do golpe:** jab 3 quadros, direto 4, gancho 8, chute de brasa 9, especial 10. Contra-ataque soma 4 e o golpe que zera a vida congela 12. Quem apanha treme durante o congelamento.

@@ -44,17 +44,19 @@ func _ready() -> void:
 	Sound.music("titulo")
 	var items := [
 		{"id": "jogar", "label": "Jogar"},
+		{"id": "fase", "label": "Fase", "value": "", "slider": true},
 		{"id": "opcoes", "label": "Opções"},
 		{"id": "controles", "label": "Controles"},
 		{"id": "creditos", "label": "Créditos"},
 	]
 	# No navegador o co-op online (ENet/UDP) não existe: o item e o atalho O somem.
 	if not OS.has_feature("web"):
-		items.insert(1, {"id": "online", "label": "Co-op online"})
+		items.insert(2, {"id": "online", "label": "Co-op online"})
 	if OS.has_feature("pc") and not OS.has_feature("web"):
 		items.append({"id": "sair", "label": "Sair"})
 	_menu = MenuList.new(items)
 	_menu.pause_is_back = false
+	_menu.set_value("fase", _fase_label())
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 11
 	for i in 60:
@@ -82,6 +84,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			var result := _menu.handle(event)
 			if result.get("do", "") == "ok":
 				_choose(result["id"])
+			elif result.get("id", "") == "fase" and result.get("do", "") in ["left", "right"]:
+				Fases.cycle(-1 if result["do"] == "left" else 1)
+				_menu.set_value("fase", _fase_label())
 		"opcoes":
 			if _options.handle(event):
 				_screen = "menu"
@@ -94,9 +99,15 @@ func _unhandled_input(event: InputEvent) -> void:
 	_handled()
 
 
+## Valor da linha "Fase" do menu: número e nome curto (setas para os lados trocam).
+func _fase_label() -> String:
+	return "< %d %s >" % [Fases.current, Fases.display_name().get_slice(" ", 0)]
+
+
 func _choose(id: String) -> void:
 	match id:
-		"jogar":
+		"jogar", "fase":
+			Fases.reset_carry()
 			_leave(SELECT_SCENE)
 		"online":
 			_leave(LOBBY_SCENE)

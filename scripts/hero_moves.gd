@@ -14,7 +14,10 @@ class_name HeroMoves
 ##
 ##   label ........ nome que aparece na tela quando o golpe sai
 ##   anim ......... animação da arte (atk1, atk2, atk3, air_atk, sp_atk, roll, defend)
-##   full_art ..... toca a animação inteira, do preparo ao fim (como o especial)
+##   full_art ..... toca a animação inteira, do preparo ao fim
+##   art_from, art_impact, art_end, art_to, art_tpf: toca os quadros art_from..art_to
+##                  da arte, um a um, art_tpf ticks cada; o dano vai de art_impact a
+##                  art_end. startup/active/recovery saem daí (CharacterSprite.art_timing)
 ##   burn ......... queimadura: N pulsos de dano ao longo do tempo (nunca mata)
 ##   freeze ....... congela o alvo por N quadros (um golpe que derruba estilhaça o gelo)
 ##   pull / push .. puxa ou empurra o alvo N px na horizontal
@@ -102,9 +105,10 @@ const MOVES := {
 		"charged": {"name": "punho_sismico", "label": "Punho Sísmico", "anim": "atk3", "startup": 8, "active": 4,
 			"recovery": 18, "damage": 16, "near": 0.0, "far": 32.0, "knockdown": true, "armor": true, "shake": 3.0,
 			"projectile": {"ground": true, "speed": 170.0, "damage": 12, "knockdown": true}},
-		"special2": {"name": "pilares_de_pedra", "label": "Pilares de Pedra", "anim": "sp_atk", "startup": 8,
-			"active": 4, "recovery": 16, "damage": 14, "near": 0.0, "far": 50.0, "area": true, "depth": 20.0,
-			"y_lo": 0.0, "y_hi": 50.0, "launch": 260.0, "knockdown": true, "fx": "special_terra", "shake": 2.5},
+		"special2": {"name": "pilares_de_pedra", "label": "Pilares de Pedra", "anim": "sp_atk",
+			"art_from": 0, "art_impact": 3, "art_end": 6, "art_to": 7, "art_tpf": 3,
+			"damage": 14, "near": 0.0, "far": 50.0, "area": true, "depth": 20.0,
+			"y_lo": 0.0, "y_hi": 50.0, "launch": 260.0, "knockdown": true, "shake": 2.5},
 		"air": {"name": "queda_de_rocha", "label": "Queda de Rocha", "anim": "air_atk", "damage": 10, "near": -6.0,
 			"far": 22.0, "y_lo": -20.0, "y_hi": 20.0, "knockdown": true, "dive": Vector2(0.0, -420.0),
 			"land": {"name": "rocha_impacto", "damage": 14, "far": 46.0, "depth": 20.0, "shake": 4.0, "fx": "special_terra"}},
@@ -144,8 +148,9 @@ const MOVES := {
 			"no_hit": true,
 			"projectile": {"art": "agua", "speed": 170.0, "damage": 10, "pierce": true, "knockdown": true,
 				"carry": true}},
-		"special2": {"name": "fonte_de_cura", "label": "Fonte de Cura", "anim": "sp_atk", "startup": 8, "active": 4,
-			"recovery": 14, "damage": 6, "near": 0.0, "far": 44.0, "area": true, "depth": 20.0, "y_lo": 0.0,
+		"special2": {"name": "fonte_de_cura", "label": "Fonte de Cura", "anim": "sp_atk",
+			"art_from": 11, "art_impact": 12, "art_end": 15, "art_to": 21, "art_tpf": 3,
+			"damage": 6, "near": 0.0, "far": 44.0, "area": true, "depth": 20.0, "y_lo": 0.0,
 			"y_hi": 50.0, "knockdown": true, "heal": 20, "meter_cost": 40, "hp_ok": false, "fx": "heal"},
 		"air": {"name": "gota_cadente", "label": "Gota Cadente", "anim": "air_atk", "damage": 8, "near": -4.0,
 			"far": 28.0, "y_lo": -14.0, "y_hi": 24.0, "dive": Vector2(110.0, -300.0),
@@ -166,6 +171,8 @@ const TEAM_NAMES := {
 static func get_move(id: String, slot: String) -> Dictionary:
 	var moves: Dictionary = MOVES.get(id, MOVES["fire_knight"])
 	var move: Dictionary = moves[slot].duplicate(true)
+	if move.has("art_tpf"):
+		move = CharacterSprite.art_timing(move)
 	if move.has("land"):
 		var land := LAND_BASE.duplicate()
 		land.merge(move["land"], true)

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/enemies/corrosao.gd" id="2_script"]
+
+[resource]
+script = ExtResource("1_data")
+display_name = "Corrosão"
+behavior = 4
+max_hp = 340
+score = 2500
+body_color = Color(0.6, 0.36, 0.22, 1)
+body_size = Vector2(30, 72)
+walk_speed = Vector2(44, 30)
+armor_hits = 2
+grabbable = false
+element = "Metal"
+weak_to = PackedStringArray("Fogo", "Terra")
+resists = PackedStringArray("Metal", "Vento")
+custom_script = ExtResource("2_script")
+sprite_id = "metal_bladekeeper"
+sprite_scale = 1.55
+sprite_tint = Color(0.95, 0.66, 0.5, 1)
+attack_anim = "atk1"
+phase_two_color = Color(0.92, 0.52, 0.28, 1)
+boss_title = "CORROSÃO, A LÂMINA ENFERRUJADA"

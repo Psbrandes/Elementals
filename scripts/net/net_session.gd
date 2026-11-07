@@ -677,7 +677,7 @@ func _create(entry: Array) -> Node:
 			return p
 		Kind.ENEMY, Kind.BOSS:
 			var data: EnemyData = load(entry[2])
-			var enemy: Enemy = (BOSS_SCENE if kind == Kind.BOSS else ENEMY_SCENE).instantiate()
+			var enemy: Enemy = Stage.make_enemy(data)
 			enemy.data = data
 			enemy.ai_enabled = false
 			enemy.stage = stage

@@ -71,7 +71,7 @@ var _options: OptionsMenu
 var _over_menu := MenuList.new([{"id": "continuar", "label": "Continuar desta seção"},
 	{"id": "titulo", "label": "Menu principal"}])
 var _over_frames := 0
-var _victory_menu := MenuList.new([{"id": "denovo", "label": "Jogar de novo"},
+var _victory_menu := MenuList.new(([{"id": "proxima", "label": "Próxima fase"}] if Fases.has_next() else []) + [{"id": "denovo", "label": "Jogar de novo"},
 	{"id": "heroi", "label": "Escolher outro herói"}, {"id": "titulo", "label": "Menu principal"}])
 ## Quadros desde a vitória (-1 enquanto a fase não acabou).
 var _victory := -1
@@ -88,7 +88,8 @@ func _ready() -> void:
 	stage.player.combo_ended.connect(_on_combo_ended)
 	stage.player.combo_event.connect(_on_combo_event)
 	stage.player.move_used.connect(_on_move_used)
-	stage.boss_appeared.connect(func(_boss: Boss) -> void: _show_banner("FERRUGEM, O TENENTE DE TERRA"))
+	stage.boss_appeared.connect(func(boss: Boss) -> void:
+		_show_banner(boss.data.boss_title if boss.data.boss_title != "" else "FERRUGEM, O TENENTE DE TERRA"))
 
 
 func _process(_delta: float) -> void:
@@ -232,6 +233,8 @@ func _victory_input(event: InputEvent) -> void:
 	var result := _victory_menu.handle(event)
 	if result.get("do", "") == "ok":
 		match result["id"]:
+			"proxima":
+				stage.next_stage()
 			"denovo":
 				stage.restart_stage()
 			"heroi":
@@ -280,7 +283,7 @@ func _on_move_used(label: String, color: Color) -> void:
 
 func _on_section_entered(index: int, title: String) -> void:
 	if index == 0:
-		_show_banner("BAIRRO DO PORTO")
+		_show_banner(("FASE %d: " % Fases.current if Fases.current > 1 else "") + Fases.display_name().to_upper())
 	else:
 		_show_banner(title.to_upper())
 

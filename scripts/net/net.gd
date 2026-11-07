@@ -326,6 +326,9 @@ func _goto(scene: String, section: int, gen: int, state: Dictionary, biome := "f
 	if lobby.has(my_id()):
 		Characters.selected = lobby[my_id()]["hero"]
 	Stage.continue_section = section
+	# Online, por enquanto, só a fase 1 (a sala volta para ela).
+	Fases.current = 1
+	Fases.reset_carry()
 	get_tree().change_scene_to_file(scene)
 
 

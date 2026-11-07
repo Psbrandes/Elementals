@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/enemies/sombra.gd" id="2_script"]
+
+[resource]
+script = ExtResource("1_data")
+display_name = "Sombra"
+behavior = 1
+max_hp = 34
+score = 250
+body_color = Color(0.35, 0.25, 0.5, 1)
+walk_speed = Vector2(72, 46)
+element = "Sombra"
+weak_to = PackedStringArray("Fogo", "Cristal")
+resists = PackedStringArray("Vento")
+dodge_chance = 0.3
+custom_script = ExtResource("2_script")
+drop = "maca"
+drop_chance = 0.2
+sprite_id = "wind_hashashin"
+sprite_scale = 1.2
+sprite_tint = Color(0.55, 0.42, 0.78, 1)
+attack_anim = "atk1"
+attack_damage = 6
+attack_reach = 30.0
+attack_startup = 12
+attack_cooldown_min = 60
+attack_cooldown_max = 110

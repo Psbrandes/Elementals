@@ -12,7 +12,8 @@ func _initialize() -> void:
 func _run() -> void:
 	change_scene_to_file("res://scenes/title.tscn")
 	await _wait(150)
-	for action in ["move_down", "move_down"]:
+	# Jogar, Fase, Co-op online, Opções...
+	for action in ["move_down", "move_down", "move_down"]:
 		await _press(action, 20)
 	await _press("attack", 30)
 	await _press("move_right", 18)
@@ -27,7 +28,7 @@ func _run() -> void:
 	await _press("move_down", 20)
 	await _press("attack", 150)
 	await _press("jump", 25)
-	for action in ["move_up", "move_up", "move_up", "move_up"]:
+	for action in ["move_up", "move_up", "move_up", "move_up", "move_up"]:
 		await _press(action, 12)
 	await _press("attack", 70)
 	# Seleção: anda dois heróis e confirma.

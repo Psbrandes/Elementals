@@ -10,7 +10,7 @@ const LINE_SPACING := 32.0
 
 
 func _draw() -> void:
-	var sections: Array = Stage.SECTIONS
+	var sections: Array = Fases.sections()
 	for i in sections.size():
 		var left: float = sections[i]["start"]
 		var right: float = Stage.STAGE_LENGTH if i == sections.size() - 1 else sections[i + 1]["start"]

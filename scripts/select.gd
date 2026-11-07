@@ -30,6 +30,7 @@ func _process(_delta: float) -> void:
 		_confirmed -= 1
 		if _confirmed == 0:
 			Stage.continue_section = 0
+			Fases.reset_carry()
 			get_tree().change_scene_to_file(MAIN_SCENE)
 	queue_redraw()
 
