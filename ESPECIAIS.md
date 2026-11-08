@@ -42,10 +42,16 @@ A correção de ritmo anterior (`attack_frame` por poses) valeu para todos os go
 | Brasa | 18 | 3 | 12–14 | 0,80 s | 0,97 s |
 | Vento | 30 | 3 | 8–27 | 1,00 s | 1,57 s |
 | Folha | 17 | 3 | 9–12 | 0,70 s | 0,92 s |
-| Terra | 25 | 3 | 4–20 | 0,73 s | 1,32 s |
+| Terra | 25 | 3 | 8–10 e 19–21 (dois acertos) | 0,73 s | 1,32 s |
 | Metal | 11 | 4 | 3–8 | 0,53 s | 0,80 s |
 | Cristal | 15 | 4 | 8–12 | 0,70 s | 1,07 s |
 | Água | 32 | 3 | 12–22 | 0,87 s | 1,67 s |
+
+**Terra (ajuste do Pedro):** o especial acerta duas vezes. Quando o pilar sobe (quadros 8 a 10) dá 8 de dano e
+lança o inimigo para cima; quando a bola de terra fecha (19 a 21) dá 14 e derruba, pegando o inimigo ainda no ar.
+As pedras do começo não dão dano. Isso vem da chave `hits` em `SPECIAL_ART` (trechos da arte com dano próprio),
+tratada em `Player._enter_art_hit()`; serve para dar vários acertos a qualquer especial.
+Vídeo: `especial-terra-v2.mp4` (versão anterior à esquerda, nova à direita).
 
 O herói continua invencível o especial inteiro. Para afinar: `SPECIAL_ART` e `SPECIAL_MAX_REACH` em
 `player.gd`, `ART_SETTLE_TICKS` em `character_sprite.gd`.
@@ -54,7 +60,7 @@ O herói continua invencível o especial inteiro. Para afinar: `SPECIAL_ART` e `
 
 | Teste | Resultado |
 |---|---|
-| `tests/test_runner.gd` | 469 verificações, 0 falhas (eram 434) |
+| `tests/test_runner.gd` | 481 verificações com a fase 2, 0 falhas (inclui "Terra acerta 2 vezes") |
 | `tests/test_movement.gd` | 62, 0 falhas |
 | `tests/test_menus.gd` | 49, 0 falhas |
 | `tests/playthrough.gd` (robô) | fase concluída em 237 s, 3 quedas |

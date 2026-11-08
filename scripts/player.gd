@@ -124,11 +124,16 @@ const REACH_CAP := 48.0
 ## ticks por quadro no preparo, impact = 1º quadro que dá dano (o efeito chega no
 ## inimigo), end = último quadro com dano (o efeito ainda na tela). A arte toca
 ## inteira, do 1º ao último quadro, sem pular nenhum.
+## hits (opcional): o especial só acerta nestes trechos da arte, [de, até, ajustes];
+## cada trecho acerta de novo quem já levou e troca dano/derrubada/lançamento.
 const SPECIAL_ART := {
 	"fire_knight": {"tpf": 3, "impact": 12, "end": 14},
 	"wind_hashashin": {"tpf": 3, "impact": 8, "end": 27},
 	"leaf_ranger": {"tpf": 3, "impact": 9, "end": 12},
-	"ground_monk": {"tpf": 3, "impact": 4, "end": 20},
+	# Terra: acerta quando o pilar sobe (lança) e quando a bola de terra fecha (derruba).
+	"ground_monk": {"tpf": 3, "impact": 8, "end": 21, "hits": [
+		[8, 10, {"damage": 8, "launch": 300.0, "knockdown": true}],
+		[19, 21, {"damage": 14, "launch": 0.0, "knockdown": true}]]},
 	"metal_bladekeeper": {"tpf": 4, "impact": 3, "end": 8, "near": -48.0},
 	"crystal_mauler": {"tpf": 4, "impact": 8, "end": 12},
 	"water_priestess": {"tpf": 3, "impact": 12, "end": 22},
@@ -1037,6 +1042,9 @@ func special_attack() -> Dictionary:
 	attack["art_windup_tpf"] = int(art.get("windup", art["tpf"]))
 	attack["far"] = clampf(sprite.reach_of("sp_atk") - 8.0, float(SPECIAL["far"]), SPECIAL_MAX_REACH)
 	attack["near"] = float(art.get("near", SPECIAL["near"]))
+	if art.has("hits"):
+		attack["art_hits"] = art["hits"]
+		attack["art_hit_index"] = -1
 	return CharacterSprite.art_timing(attack)
 
 
@@ -1160,7 +1168,25 @@ func _on_projectile_hit(target: Fighter, data: Dictionary, dir: int, damage: int
 func _check_attack_hits() -> void:
 	if current_attack.get("no_hit", false):
 		return
+	if current_attack.has("art_hits") and not _enter_art_hit():
+		return
 	super()
+
+
+## Especial com trechos de acerto (SPECIAL_ART "hits"): fora deles não acerta; ao
+## entrar num trecho novo, quem já levou pode levar de novo, com os ajustes dele.
+func _enter_art_hit() -> bool:
+	var hits: Array = current_attack["art_hits"]
+	for i in hits.size():
+		var hit: Array = hits[i]
+		if sprite.frame < int(hit[0]) or sprite.frame > int(hit[1]):
+			continue
+		if int(current_attack["art_hit_index"]) != i:
+			current_attack["art_hit_index"] = i
+			current_attack.merge(hit[2], true)
+			_attack_hits.clear()
+		return true
+	return false
 
 
 func _try_counter(from: Node2D) -> bool:

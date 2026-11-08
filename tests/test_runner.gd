@@ -792,7 +792,12 @@ func test_special_art_plays_every_frame() -> void:
 		var attack := player.current_attack
 		var frames := []
 		var hit_on_impact := false
+		var drops := 0
+		var last_hp := enemy.hp
 		while player.state == Fighter.State.ATTACK and frames.size() < 400:
+			if enemy.hp < last_hp:
+				drops += 1
+				last_hp = enemy.hp
 			if player.hitstop == 0:
 				if player.state_frame == int(attack["startup"]) + 1:
 					hit_on_impact = player.sprite.frame == int(art["impact"])
@@ -813,6 +818,9 @@ func test_special_art_plays_every_frame() -> void:
 		_check(_is_sorted(frames), "%s: a arte do especial nunca volta para trás" % c["name"])
 		_check(hit_on_impact, "%s: dano sai no quadro de impacto da arte" % c["name"])
 		_check(enemy.hp < hp_before, "%s: especial acerta o inimigo a 40 px" % c["name"])
+		if art.has("hits"):
+			_check(drops == art["hits"].size(), "%s: especial acerta %d vezes (%d)" % [c["name"],
+				art["hits"].size(), drops])
 
 
 func _is_sorted(values: Array) -> bool:
